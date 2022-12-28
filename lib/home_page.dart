@@ -1,3 +1,4 @@
+import 'package:d_info/d_info.dart';
 import 'package:d_input/d_input.dart';
 import 'package:d_method/d_method.dart';
 import 'package:flutter/material.dart';
@@ -34,14 +35,29 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () {                
                 Map item = {
                   'title': controllerTitle.text,
                   'description': controllerDescription.text,
                 };
+
+                // add data
                 listData.add(item);
+
+                /** additional for next implemenattion
+                 * execute to api */
+
+                // trigger update ui
                 setState(() {});
+                
+                // logging
                 DMethod.printTitle('Create', listData.toString());
+
+                // close dialog
+                Navigator.pop(context);
+
+                // show notif to user
+                DInfo.snackBarSuccess(context, 'Success Create New Data');                
               },
               child: const Text('Create New Data'),
             ),
