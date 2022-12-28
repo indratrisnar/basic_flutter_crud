@@ -91,7 +91,60 @@ class _HomePageState extends State<HomePage> {
     DMethod.printTitle('read -  after get data', listData.toString());
   }
 
-  update() {}
+  update(String oldTitle, String oldDescription,int index) {
+    final controllerTitle = TextEditingController(text: oldTitle);
+    final controllerDescription = TextEditingController(text: oldDescription);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          title: const Text('Update'),
+          titlePadding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+          contentPadding: const EdgeInsets.all(16),
+          children: [
+            DInput(
+              controller: controllerTitle,
+              hint: 'Title',
+            ),
+            const SizedBox(height: 16),
+            DInput(
+              controller: controllerDescription,
+              hint: 'Description',
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Map newItem = {
+                  'title': controllerTitle.text,
+                  'description': controllerDescription.text,
+                };
+
+                // update data
+                listData[index] = newItem;
+
+                /** additional for next implemenattion
+                 * execute to api */
+
+                // trigger update ui
+                setState(() {});
+
+                // logging
+                DMethod.printTitle('update', listData.toString());
+
+                // close dialog
+                Navigator.pop(context);
+
+                // show notif to user
+                DInfo.snackBarSuccess(context, 'Success Update Data');
+              },
+              child: const Text('Update'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   delete() {}
 
   @override
@@ -119,6 +172,24 @@ class _HomePageState extends State<HomePage> {
                 return ListTile(
                   title: Text(item['title']),
                   subtitle: Text(item['description']),
+                  trailing: PopupMenuButton(
+                    onSelected: (value) {
+                      if (value == 'update') {
+                        update(item['title'], item['description'],index);
+                      }
+                      if (value == 'delete') {}
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 'update',
+                        child: Text('Update'),
+                      ),
+                      const PopupMenuItem(
+                        value: 'delete',
+                        child: Text('Delete'),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
