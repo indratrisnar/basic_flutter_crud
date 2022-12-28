@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {                
+              onPressed: () {
                 Map item = {
                   'title': controllerTitle.text,
                   'description': controllerDescription.text,
@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
 
                 // trigger update ui
                 setState(() {});
-                
+
                 // logging
                 DMethod.printTitle('Create', listData.toString());
 
@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pop(context);
 
                 // show notif to user
-                DInfo.snackBarSuccess(context, 'Success Create New Data');                
+                DInfo.snackBarSuccess(context, 'Success Create New Data');
               },
               child: const Text('Create New Data'),
             ),
@@ -67,9 +67,38 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  read() {}
+  read() {
+    // logging
+    DMethod.printTitle('read -  before get data', listData.toString());
+
+    // get data from database/api/collection
+    List<Map> initialList = [
+      {
+        'title': 'Container',
+        'description': 'Wrapper widget that contains size and styling',
+      },
+      {
+        'title': 'Neumorphism',
+        'description': '3d shape use optic view',
+      }
+    ];
+
+    // move data
+    listData = initialList;
+    setState(() {});
+
+    // logging
+    DMethod.printTitle('read -  after get data', listData.toString());
+  }
+
   update() {}
   delete() {}
+
+  @override
+  void initState() {
+    read();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +110,18 @@ class _HomePageState extends State<HomePage> {
         onPressed: () => create(),
         child: const Icon(Icons.add),
       ),
+      body: listData.isEmpty
+          ? const Center(child: Text('Empty'))
+          : ListView.builder(
+              itemCount: listData.length,
+              itemBuilder: (context, index) {
+                Map item = listData[index];
+                return ListTile(
+                  title: Text(item['title']),
+                  subtitle: Text(item['description']),
+                );
+              },
+            ),
     );
   }
 }
