@@ -1,3 +1,5 @@
+import 'package:d_input/d_input.dart';
+import 'package:d_method/d_method.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,7 +12,45 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Map> listData = [];
 
-  create() {}
+  create() {
+    final controllerTitle = TextEditingController();
+    final controllerDescription = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          title: const Text('Create'),
+          titlePadding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+          contentPadding: const EdgeInsets.all(16),
+          children: [
+            DInput(
+              controller: controllerTitle,
+              hint: 'Title',
+            ),
+            const SizedBox(height: 16),
+            DInput(
+              controller: controllerDescription,
+              hint: 'Description',
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Map item = {
+                  'title': controllerTitle.text,
+                  'description': controllerDescription.text,
+                };
+                listData.add(item);
+                setState(() {});
+                DMethod.printTitle('Create', listData.toString());
+              },
+              child: const Text('Create New Data'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   read() {}
   update() {}
   delete() {}
@@ -20,6 +60,10 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Basic CRUD with Collection'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => create(),
+        child: const Icon(Icons.add),
       ),
     );
   }
