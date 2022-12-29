@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
     DMethod.printTitle('read -  after get data', listData.toString());
   }
 
-  update(String oldTitle, String oldDescription,int index) {
+  update(String oldTitle, String oldDescription, int index) {
     final controllerTitle = TextEditingController(text: oldTitle);
     final controllerDescription = TextEditingController(text: oldDescription);
     showDialog(
@@ -145,7 +145,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  delete() {}
+  delete(int index) {
+    // logging
+    DMethod.printTitle('delete - before', listData.toString());
+
+    // delete from list
+    listData.removeAt(index);
+
+    // trigger ui
+    setState(() {});
+
+    // logging
+    DMethod.printTitle('delete - after', listData.toString());
+
+    // notif to user
+    DInfo.snackBarError(context, 'Delete From List');
+  }
 
   @override
   void initState() {
@@ -175,9 +190,11 @@ class _HomePageState extends State<HomePage> {
                   trailing: PopupMenuButton(
                     onSelected: (value) {
                       if (value == 'update') {
-                        update(item['title'], item['description'],index);
+                        update(item['title'], item['description'], index);
                       }
-                      if (value == 'delete') {}
+                      if (value == 'delete') {
+                        delete(index);
+                      }
                     },
                     itemBuilder: (context) => [
                       const PopupMenuItem(
