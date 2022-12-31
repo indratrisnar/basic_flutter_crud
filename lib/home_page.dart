@@ -37,6 +37,7 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton(
               onPressed: () {
                 Map item = {
+                  'id': UniqueKey().toString(),
                   'title': controllerTitle.text,
                   'description': controllerDescription.text,
                 };
@@ -74,10 +75,12 @@ class _HomePageState extends State<HomePage> {
     // get data from database/api/collection
     List<Map> initialList = [
       {
+        'id': '001',
         'title': 'Container',
         'description': 'Wrapper widget that contains size and styling',
       },
       {
+        'id': '002',
         'title': 'Neumorphism',
         'description': '3d shape use optic view',
       }
@@ -91,9 +94,10 @@ class _HomePageState extends State<HomePage> {
     DMethod.printTitle('read -  after get data', listData.toString());
   }
 
-  update(String oldTitle, String oldDescription, int index) {
-    final controllerTitle = TextEditingController(text: oldTitle);
-    final controllerDescription = TextEditingController(text: oldDescription);
+  update(Map oldItemData, int index) {
+    final controllerTitle = TextEditingController(text: oldItemData['title']);
+    final controllerDescription =
+        TextEditingController(text: oldItemData['description']);
     showDialog(
       context: context,
       builder: (context) {
@@ -115,6 +119,7 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton(
               onPressed: () {
                 Map newItem = {
+                  'id': oldItemData['id'],
                   'title': controllerTitle.text,
                   'description': controllerDescription.text,
                 };
@@ -162,6 +167,23 @@ class _HomePageState extends State<HomePage> {
     DInfo.snackBarError(context, 'Delete From List');
   }
 
+  deleteById(String id) {
+    // logging
+    DMethod.printTitle('delete by id - before', listData.toString());
+
+    // delete from list
+    listData.removeWhere((element) => element['id'] == id);
+
+    // trigger ui
+    setState(() {});
+
+    // logging
+    DMethod.printTitle('delete by id - after', listData.toString());
+
+    // notif to user
+    DInfo.snackBarError(context, 'Delete From List');
+  }
+
   @override
   void initState() {
     read();
@@ -190,10 +212,11 @@ class _HomePageState extends State<HomePage> {
                   trailing: PopupMenuButton(
                     onSelected: (value) {
                       if (value == 'update') {
-                        update(item['title'], item['description'], index);
+                        update(item, index);
                       }
                       if (value == 'delete') {
-                        delete(index);
+                        // delete(index);
+                        deleteById(item['id']);
                       }
                     },
                     itemBuilder: (context) => [
