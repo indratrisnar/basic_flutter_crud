@@ -65,6 +65,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Map item = {
                   'id': UniqueKey().toString(),
+                  'category': 'Front End',
                   'title': controllerTitle.text,
                   'description': controllerDescription.text,
                 };
@@ -133,6 +134,7 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Map newItem = {
                   'id': oldItemData['id'],
+                  'category': oldItemData['category'],
                   'title': controllerTitle.text,
                   'description': controllerDescription.text,
                 };
