@@ -13,6 +13,21 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Map> listData = [];
   bool ascending = true;
+  final controllerSearch = TextEditingController();
+
+  // get data from database/api/collection
+  List<Map> initialList = [
+    {
+      'id': '001',
+      'title': 'Container',
+      'description': 'Wrapper widget that contains size and styling',
+    },
+    {
+      'id': '002',
+      'title': 'Neumorphism',
+      'description': '3d shape use optic view',
+    }
+  ];
 
   create() {
     final controllerTitle = TextEditingController();
@@ -72,20 +87,6 @@ class _HomePageState extends State<HomePage> {
   read() {
     // logging
     DMethod.printTitle('read -  before get data', listData.toString());
-
-    // get data from database/api/collection
-    List<Map> initialList = [
-      {
-        'id': '001',
-        'title': 'Container',
-        'description': 'Wrapper widget that contains size and styling',
-      },
-      {
-        'id': '002',
-        'title': 'Neumorphism',
-        'description': '3d shape use optic view',
-      }
-    ];
 
     // move data
     listData = initialList;
@@ -197,6 +198,27 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+  search() {
+    // reset list -> if not use api or not have database
+    listData = initialList;
+
+    // logging
+    DMethod.printTitle('search - before', listData.toString());
+
+    // do it search or implement search api
+    listData = listData.where((element) {
+      String title = element['title'].toLowerCase();
+      String query = controllerSearch.text.toLowerCase();
+      return title.contains(query);
+    }).toList();
+
+    // logging
+    DMethod.printTitle('search - before', listData.toString());
+
+    // trigger ui
+    setState(() {});
+  }
+
   @override
   void initState() {
     read();
@@ -224,6 +246,30 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: Container(
+            height: 50 - 16,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+            padding: const EdgeInsets.only(left: 16),
+            child: TextField(
+              controller: controllerSearch,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'type search...',
+                isDense: true,
+                suffixIcon: IconButton(
+                  onPressed: () => search(),
+                  icon: const Icon(Icons.search),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => create(),
