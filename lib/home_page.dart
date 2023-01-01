@@ -14,16 +14,27 @@ class _HomePageState extends State<HomePage> {
   List<Map> listData = [];
   bool ascending = true;
   final controllerSearch = TextEditingController();
+  String selectedCategory = 'All';
+  List categories = [
+    'All',
+    'Front End',
+    'Back End',
+    'Design',
+    'API',
+    'Database'
+  ];
 
   // get data from database/api/collection
   List<Map> initialList = [
     {
       'id': '001',
       'title': 'Container',
+      'category': 'Front End',
       'description': 'Wrapper widget that contains size and styling',
     },
     {
       'id': '002',
+      'category': 'Design',
       'title': 'Neumorphism',
       'description': '3d shape use optic view',
     }
@@ -213,7 +224,30 @@ class _HomePageState extends State<HomePage> {
     }).toList();
 
     // logging
-    DMethod.printTitle('search - before', listData.toString());
+    DMethod.printTitle('search - after', listData.toString());
+
+    // trigger ui
+    setState(() {});
+  }
+
+  filterCategory(String category) {
+    // reset list -> if not use api or not have database
+    listData = initialList;
+
+    // logging
+    DMethod.printTitle('filterCategory - before', listData.toString());
+
+    // change selectedCategory
+    selectedCategory = category;
+
+    // set filter
+    if (category != 'All') {
+      listData =
+          listData.where((element) => element['category'] == category).toList();
+    }
+
+    // logging
+    DMethod.printTitle('filterCategory - after', listData.toString());
 
     // trigger ui
     setState(() {});
@@ -248,26 +282,53 @@ class _HomePageState extends State<HomePage> {
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(50),
-          child: Container(
-            height: 50 - 16,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-            padding: const EdgeInsets.only(left: 16),
-            child: TextField(
-              controller: controllerSearch,
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: 'type search...',
-                isDense: true,
-                suffixIcon: IconButton(
-                  onPressed: () => search(),
-                  icon: const Icon(Icons.search),
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 50 - 16,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                  padding: const EdgeInsets.only(left: 16),
+                  child: TextField(
+                    controller: controllerSearch,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'type search...',
+                      isDense: true,
+                      suffixIcon: IconButton(
+                        onPressed: () => search(),
+                        icon: const Icon(Icons.search),
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              PopupMenuButton<String>(
+                padding: const EdgeInsets.fromLTRB(0, 0, 8, 8),
+                icon: const Icon(Icons.tune, color: Colors.white),
+                onSelected: (value) => filterCategory(value),
+                itemBuilder: (context) => List.generate(
+                  categories.length,
+                  (index) {
+                    String itemCategory = categories[index];
+                    return PopupMenuItem(
+                      value: itemCategory,
+                      child: Row(
+                        children: [
+                          Text(itemCategory),
+                          if (itemCategory == selectedCategory)
+                            const Icon(Icons.check, color: Colors.blue),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
